@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { fileToBase64 } from '../utils/fileUtils';
 import './FormPage.css';
 
 const DEPARTMENTS = [
@@ -13,7 +14,6 @@ const DEPARTMENTS = [
   'IT',
   'MECH',
 ];
-
 
 const STATUS_OPTIONS = [
   { value: 'employed', label: 'Employed' },
@@ -102,7 +102,7 @@ function FileUploadField({ id, label, required, hint, accept, file, onFileChange
         <div className="file-preview">
           <div className="file-preview__info">
             <span className="file-preview__icon">
-              {file.type.includes('pdf') ? '📑' : '🖼️'}
+              {file.type && file.type.includes('pdf') ? '📑' : '🖼️'}
             </span>
             <div className="file-preview__details">
               <p className="file-preview__name">{file.name}</p>
@@ -124,9 +124,9 @@ function FileUploadField({ id, label, required, hint, accept, file, onFileChange
 }
 
 /* === Main Form Page === */
-function FormPage({ onBack }) {
+function FormPage({ user, onBack }) {
   const [formData, setFormData] = useState({
-    name: '',
+    name: user?.name || '',
     rollNumber: '',
     department: '',
     currentStatus: '',
@@ -139,12 +139,22 @@ function FormPage({ onBack }) {
     package: '',
   });
 
-  // File uploads — keyed by purpose
   const [files, setFiles] = useState({
     admissionProof: null,
     joiningLetter: null,
     photo: null,
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [statusMessage, setStatusMessage] = useState('');
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submissionResult, setSubmissionResult] = useState(null);
+
+  useEffect(() => {
+    if (user && user.name && !formData.name) {
+      setFormData((prev) => ({ ...prev, name: user.name }));
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -162,7 +172,7 @@ function FormPage({ onBack }) {
   const isPG = formData.currentStatus === 'higher-studies';
   const isEmployed = formData.currentStatus === 'employed';
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validation for files
@@ -184,8 +194,94 @@ function FormPage({ onBack }) {
       }
     }
 
-    alert('Form submitted successfully! (Placeholder — connect to backend)');
+    setIsSubmitting(true);
+    setStatusMessage('Converting attached documents to Base64...');
+
+    try {
+      const base64Files = {};
+      if (files.joiningLetter) base64Files.joiningLetter = await fileToBase64(files.joiningLetter);
+      if (files.photo) base64Files.photo = await fileToBase64(files.photo);
+      if (files.admissionProof) base64Files.admissionProof = await fileToBase64(files.admissionProof);
+
+      setStatusMessage('Sending data & documents to Google Cloud & Google Drive...');
+
+      const payload = {
+        googleEmail: user?.email,
+        ...formData,
+        files: base64Files,
+      };
+
+      const scriptUrl = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
+      if (!scriptUrl) {
+        throw new Error('Google Script URL is not configured in .env');
+      }
+
+      const response = await fetch(scriptUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload),
+      });
+      const result = await response.json();
+      
+      if (result.success) {
+        setSubmissionResult({
+          success: true,
+          folderUrl: result.folderUrl,
+          message: 'Your response and documents were successfully recorded in Google Sheets and uploaded to your dedicated Google Drive folder!',
+        });
+        setIsSubmitted(true);
+      } else {
+        throw new Error(result.error || 'Backend returned an error');
+      }
+    } catch (err) {
+      console.error('Submission error:', err);
+      alert('Error submitting to Google Cloud: ' + (err.message || 'Unknown network error'));
+    } finally {
+      setIsSubmitting(false);
+      setStatusMessage('');
+    }
   };
+
+  if (isSubmitted && submissionResult) {
+    return (
+      <div className="form-page">
+        <main className="form-page__content">
+          <div className="form-page__inner">
+            <div className="form-page__card form-page__success">
+              <div className="form-page__success-icon">🎉</div>
+              <h2 className="form-page__success-title">Submission Recorded!</h2>
+              <p className="form-page__success-subtitle">{submissionResult.message}</p>
+              
+              <div className="form-page__success-box">
+                <div className="success-row">
+                  <span>Verified Institutional Email:</span>
+                  <strong>{user?.email || '22261A0501@mlrit.ac.in'}</strong>
+                </div>
+                <div className="success-row">
+                  <span>Roll Number:</span>
+                  <strong>{formData.rollNumber}</strong>
+                </div>
+                <div className="success-row">
+                  <span>Department:</span>
+                  <strong>{formData.department}</strong>
+                </div>
+              </div>
+
+              <div className="form-page__nav" style={{ justifyContent: 'center', marginTop: 'var(--space-6)' }}>
+                <button
+                  type="button"
+                  className="form-page__nav-btn form-page__nav-btn--submit"
+                  onClick={onBack}
+                >
+                  ← Return to Home
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="form-page">
@@ -197,6 +293,11 @@ function FormPage({ onBack }) {
               <p className="form-page__card-subtitle">
                 All fields marked with <span className="form-label__required">*</span> are required
               </p>
+              {user && (
+                <div className="form-page__user-banner">
+                  <span>🔒 Authenticated via Google: <strong>{user.email}</strong></span>
+                </div>
+              )}
             </div>
 
             <div className="form-page__card-body">
@@ -280,13 +381,12 @@ function FormPage({ onBack }) {
                 </div>
               </div>
 
-              {/* --- Employed Details (conditional) --- */}
+              {/* --- Employment Conditional Section --- */}
               {isEmployed && (
-                <div className="form-conditional">
-                  <div className="form-conditional__header">
-                    <span className="form-conditional__icon">💼</span>
-                    <span className="form-conditional__title">Employment Details</span>
-                  </div>
+                <div className="form-conditional-section form-conditional-section--enter">
+                  <h3 className="form-conditional-section__title">
+                    💼 Employment Details
+                  </h3>
 
                   <div className="form-row">
                     <div className="form-group">
@@ -298,10 +398,10 @@ function FormPage({ onBack }) {
                         id="companyName"
                         name="companyName"
                         className="form-input"
-                        placeholder="e.g., TCS, Infosys, Google"
+                        placeholder="e.g., Google, Microsoft, TCS"
                         value={formData.companyName}
                         onChange={handleChange}
-                        required
+                        required={isEmployed}
                       />
                     </div>
                     <div className="form-group">
@@ -313,30 +413,31 @@ function FormPage({ onBack }) {
                         id="package"
                         name="package"
                         className="form-input"
-                        placeholder="e.g., 6.5"
+                        placeholder="e.g., 12.5 LPA"
                         value={formData.package}
                         onChange={handleChange}
-                        required
+                        required={isEmployed}
                       />
-                      <p className="form-hint">Annual CTC in Lakhs Per Annum.</p>
+                      <p className="form-hint">Cost to Company per annum</p>
                     </div>
                   </div>
 
-                  <div className="form-row">
+                  <div className="form-row" style={{ marginTop: 'var(--space-4)' }}>
                     <FileUploadField
                       id="joiningLetter"
-                      label="Joining Letter"
-                      required
-                      hint="Upload your joining letter or offer letter."
+                      label="Joining / Offer Letter"
+                      required={true}
+                      hint="Upload official offer letter or appointment order"
+                      accept=".pdf,.jpg,.jpeg,.png"
                       file={files.joiningLetter}
                       onFileChange={(f) => setFile('joiningLetter', f)}
                       onRemove={() => removeFile('joiningLetter')}
                     />
                     <FileUploadField
                       id="photo"
-                      label="Photo"
-                      required
-                      hint="Upload a recent passport-size photo."
+                      label="Professional Photo"
+                      required={true}
+                      hint="Upload a clear headshot or passport size photo"
                       accept=".jpg,.jpeg,.png"
                       file={files.photo}
                       onFileChange={(f) => setFile('photo', f)}
@@ -346,13 +447,12 @@ function FormPage({ onBack }) {
                 </div>
               )}
 
-              {/* --- PG Details (conditional) --- */}
+              {/* --- PG Conditional Section --- */}
               {isPG && (
-                <div className="form-conditional">
-                  <div className="form-conditional__header">
-                    <span className="form-conditional__icon">🎓</span>
-                    <span className="form-conditional__title">Post-Graduate Details</span>
-                  </div>
+                <div className="form-conditional-section form-conditional-section--enter">
+                  <h3 className="form-conditional-section__title">
+                    🎓 Higher Studies (PG) Details
+                  </h3>
 
                   <div className="form-row">
                     <div className="form-group">
@@ -364,10 +464,10 @@ function FormPage({ onBack }) {
                         id="pgCourse"
                         name="pgCourse"
                         className="form-input"
-                        placeholder="e.g., M.Tech, MS in CS, MBA"
+                        placeholder="e.g., M.S. in Computer Science, MBA, M.Tech"
                         value={formData.pgCourse}
                         onChange={handleChange}
-                        required
+                        required={isPG}
                       />
                     </div>
                     <div className="form-group">
@@ -379,15 +479,15 @@ function FormPage({ onBack }) {
                         id="pgSpecialization"
                         name="pgSpecialization"
                         className="form-input"
-                        placeholder="e.g., Machine Learning, VLSI Design"
+                        placeholder="e.g., Artificial Intelligence, Data Science"
                         value={formData.pgSpecialization}
                         onChange={handleChange}
-                        required
+                        required={isPG}
                       />
                     </div>
                   </div>
 
-                  <div className="form-group">
+                  <div className="form-group" style={{ marginTop: 'var(--space-4)' }}>
                     <label className="form-label" htmlFor="pgInstitution">
                       University / Institution <span className="form-label__required">*</span>
                     </label>
@@ -396,22 +496,25 @@ function FormPage({ onBack }) {
                       id="pgInstitution"
                       name="pgInstitution"
                       className="form-input"
-                      placeholder="e.g., IIT Hyderabad, University of Texas at Dallas"
+                      placeholder="e.g., Arizona State University, IIT Hyderabad, IIM Bangalore"
                       value={formData.pgInstitution}
                       onChange={handleChange}
-                      required
+                      required={isPG}
                     />
                   </div>
 
-                  <FileUploadField
-                    id="admissionProof"
-                    label="Proof of Admission"
-                    required
-                    hint="Upload your admission letter, offer letter, or enrollment confirmation (PDF, JPG, PNG — max 10 MB)."
-                    file={files.admissionProof}
-                    onFileChange={(f) => setFile('admissionProof', f)}
-                    onRemove={() => removeFile('admissionProof')}
-                  />
+                  <div style={{ marginTop: 'var(--space-4)' }}>
+                    <FileUploadField
+                      id="admissionProof"
+                      label="Proof of Admission"
+                      required={true}
+                      hint="Upload admission letter, I-20, offer letter, or fee receipt"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      file={files.admissionProof}
+                      onFileChange={(f) => setFile('admissionProof', f)}
+                      onRemove={() => removeFile('admissionProof')}
+                    />
+                  </div>
                 </div>
               )}
             </div>
@@ -422,14 +525,22 @@ function FormPage({ onBack }) {
                 type="button"
                 className="form-page__nav-btn form-page__nav-btn--back"
                 onClick={onBack}
+                disabled={isSubmitting}
               >
                 ← Back to Info
               </button>
               <button
                 type="submit"
                 className="form-page__nav-btn form-page__nav-btn--submit"
+                disabled={isSubmitting}
               >
-                Submit Response ✓
+                {isSubmitting ? (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span className="spinner">⏳</span> {statusMessage || 'Submitting...'}
+                  </span>
+                ) : (
+                  'Submit Response ✓'
+                )}
               </button>
             </div>
           </form>
