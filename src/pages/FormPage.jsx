@@ -250,8 +250,8 @@ function FormPage({ user, onBack }) {
             <div className="form-page__card form-page__success">
               <div className="form-page__success-icon">🎉</div>
               <h2 className="form-page__success-title">Submission Recorded!</h2>
-              <p className="form-page__success-subtitle">{submissionResult.message}</p>
               
+
               <div className="form-page__success-box">
                 <div className="success-row">
                   <span>Verified Institutional Email:</span>
