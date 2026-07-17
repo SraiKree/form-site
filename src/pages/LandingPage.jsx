@@ -17,23 +17,21 @@ function LandingPage({ onBegin }) {
           </h1>
 
           <p className="landing__description">
-            Placeholder description text — this section will contain an overview of the
-            form's purpose, why this data is being collected, and how it benefits
-            graduating students and the institution. Replace with actual content later.
+            This form is intended for UG students who have graduated from MLR Institute of Technology and secured admission for higher studies during the academic year 2026–2027. Please provide accurate details of your admission and upload valid supporting documents. The information collected through this form will be used solely for institutional records, accreditation, and reporting purposes. Kindly ensure that all information provided is accurate and complete before submitting the form.
           </p>
 
           <div className="landing__meta">
             <div className="landing__meta-item">
               <span className="landing__meta-label">Estimated Time</span>
-              <span className="landing__meta-value">~10 minutes</span>
+              <span className="landing__meta-value">~5 minutes</span>
             </div>
             <div className="landing__meta-item">
-              <span className="landing__meta-label">Sections</span>
-              <span className="landing__meta-value">4 sections</span>
+              <span className="landing__meta-label">Target Audience</span>
+              <span className="landing__meta-value">Class of 2026</span>
             </div>
             <div className="landing__meta-item">
-              <span className="landing__meta-label">Deadline</span>
-              <span className="landing__meta-value">To be announced</span>
+              <span className="landing__meta-label">Purpose</span>
+              <span className="landing__meta-value">Institutional Records</span>
             </div>
           </div>
         </div>
@@ -49,24 +47,21 @@ function LandingPage({ onBegin }) {
               <div className="landing__card-icon">🎓</div>
               <h3 className="landing__card-title">Who Should Fill This</h3>
               <p className="landing__card-text">
-                Placeholder text — describe the target audience. E.g., all B.Tech
-                students graduating from MLRIT in 2026 across all branches.
+                UG students who have graduated from MLR Institute of Technology (Class of 2026).
               </p>
             </div>
             <div className="landing__card">
-              <div className="landing__card-icon">📊</div>
+              <div className="landing__card-icon">📄</div>
               <h3 className="landing__card-title">What Data Is Collected</h3>
               <p className="landing__card-text">
-                Placeholder text — outline the types of data that will be collected
-                such as personal details, academic records, and placement info.
+                Details regarding your admission for higher studies or employment, along with valid supporting documents.
               </p>
             </div>
             <div className="landing__card">
               <div className="landing__card-icon">🔒</div>
               <h3 className="landing__card-title">Data Privacy</h3>
               <p className="landing__card-text">
-                Placeholder text — assure respondents about data privacy, storage
-                security, and the institutional use policy for collected information.
+                Information will be used solely for institutional records, accreditation, and reporting purposes.
               </p>
             </div>
           </div>
@@ -82,41 +77,18 @@ function LandingPage({ onBegin }) {
               <li className="landing__instruction">
                 <span className="landing__instruction-number">1</span>
                 <div className="landing__instruction-content">
-                  <p className="landing__instruction-title">Placeholder Instruction Title</p>
+                  <p className="landing__instruction-title">Provide Accurate Details</p>
                   <p className="landing__instruction-text">
-                    Placeholder text for the first instruction — describe what respondents
-                    need to do before starting the form. E.g., keep your roll number,
-                    hall ticket, and placement details handy.
+                    Kindly ensure that all information provided is accurate and complete before submitting the form.
                   </p>
                 </div>
               </li>
               <li className="landing__instruction">
                 <span className="landing__instruction-number">2</span>
                 <div className="landing__instruction-content">
-                  <p className="landing__instruction-title">Placeholder Instruction Title</p>
+                  <p className="landing__instruction-title">Prepare Documents</p>
                   <p className="landing__instruction-text">
-                    Placeholder text for the second instruction — e.g., fill all fields
-                    accurately. Incorrect data may lead to discrepancies in records.
-                  </p>
-                </div>
-              </li>
-              <li className="landing__instruction">
-                <span className="landing__instruction-number">3</span>
-                <div className="landing__instruction-content">
-                  <p className="landing__instruction-title">Placeholder Instruction Title</p>
-                  <p className="landing__instruction-text">
-                    Placeholder text for the third instruction — e.g., you can save
-                    progress and resume later. Ensure you submit before the deadline.
-                  </p>
-                </div>
-              </li>
-              <li className="landing__instruction">
-                <span className="landing__instruction-number">4</span>
-                <div className="landing__instruction-content">
-                  <p className="landing__instruction-title">Placeholder Instruction Title</p>
-                  <p className="landing__instruction-text">
-                    Placeholder text for the fourth instruction — e.g., for any technical
-                    issues or queries, contact the placement cell at the provided email.
+                    Keep your valid supporting documents ready for upload (e.g., offer letter, admission proof, photo).
                   </p>
                 </div>
               </li>
@@ -129,9 +101,7 @@ function LandingPage({ onBegin }) {
             <div className="landing__notice-content">
               <p className="landing__notice-title">Important Notice</p>
               <p className="landing__notice-text">
-                Placeholder notice text — this will contain critical information such as
-                submission deadlines, mandatory fields warning, or consequences of not
-                submitting. Replace with actual content later.
+                Please double-check your entries. Providing accurate data helps the institution with official records and accreditation.
               </p>
             </div>
           </div>

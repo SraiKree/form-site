@@ -29,19 +29,11 @@
   gap: var(--space-3);
 }
 
-.header__logo {
+.header__logo-img {
   width: 42px;
   height: 42px;
-  background: var(--color-accent-400);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--color-primary-900);
-  letter-spacing: -0.5px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
   flex-shrink: 0;
 }
 

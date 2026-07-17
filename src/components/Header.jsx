@@ -5,7 +5,7 @@ function Header() {
     <header className="header" role="banner">
       <div className="header__inner">
         <div className="header__brand">
-          <div className="header__logo" aria-hidden="true">ML</div>
+          <img src="/logo.png" alt="MLRIT Logo" className="header__logo-img" />
           <div className="header__text">
             <span className="header__title">
               MLR Institute of Technology
