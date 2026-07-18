@@ -137,6 +137,10 @@ function FormPage({ user, onBack }) {
     // Employment fields
     companyName: '',
     package: '',
+    // Exam fields
+    examName: '',
+    // Seeking fields
+    seekingExplanation: '',
   });
 
   const [files, setFiles] = useState({
@@ -171,11 +175,14 @@ function FormPage({ user, onBack }) {
 
   const isPG = formData.currentStatus === 'higher-studies';
   const isEmployed = formData.currentStatus === 'employed';
+  const isEntrepreneur = formData.currentStatus === 'entrepreneur';
+  const isPreparing = formData.currentStatus === 'preparing';
+  const isSearching = formData.currentStatus === 'searching';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation for files
+    // Validation for files & conditional fields
     if (isEmployed) {
       if (!files.joiningLetter) {
         alert('Please upload your Joining Letter.');
@@ -190,6 +197,32 @@ function FormPage({ user, onBack }) {
     if (isPG) {
       if (!files.admissionProof) {
         alert('Please upload your Proof of Admission.');
+        return;
+      }
+      if (!files.photo) {
+        alert('Please upload your Photo.');
+        return;
+      }
+    }
+
+    if (isEntrepreneur) {
+      if (!formData.companyName) {
+        alert('Please enter your Company Name.');
+        return;
+      }
+      if (!files.photo) {
+        alert('Please upload your Photo.');
+        return;
+      }
+    }
+
+    if (isPreparing) {
+      if (!formData.examName) {
+        alert('Please enter the Exam Name.');
+        return;
+      }
+      if (!files.photo) {
+        alert('Please upload your Photo.');
         return;
       }
     }
@@ -383,8 +416,8 @@ function FormPage({ user, onBack }) {
 
               {/* --- Employment Conditional Section --- */}
               {isEmployed && (
-                <div className="form-conditional-section form-conditional-section--enter">
-                  <h3 className="form-conditional-section__title">
+                <div className="form-conditional">
+                  <h3 className="form-conditional__title">
                     💼 Employment Details
                   </h3>
 
@@ -449,8 +482,8 @@ function FormPage({ user, onBack }) {
 
               {/* --- PG Conditional Section --- */}
               {isPG && (
-                <div className="form-conditional-section form-conditional-section--enter">
-                  <h3 className="form-conditional-section__title">
+                <div className="form-conditional">
+                  <h3 className="form-conditional__title">
                     🎓 Higher Studies (PG) Details
                   </h3>
 
@@ -503,7 +536,7 @@ function FormPage({ user, onBack }) {
                     />
                   </div>
 
-                  <div style={{ marginTop: 'var(--space-4)' }}>
+                  <div className="form-row" style={{ marginTop: 'var(--space-4)' }}>
                     <FileUploadField
                       id="admissionProof"
                       label="Proof of Admission"
@@ -513,6 +546,113 @@ function FormPage({ user, onBack }) {
                       file={files.admissionProof}
                       onFileChange={(f) => setFile('admissionProof', f)}
                       onRemove={() => removeFile('admissionProof')}
+                    />
+                    <FileUploadField
+                      id="photo"
+                      label="Professional Photo"
+                      required={true}
+                      hint="Upload a clear headshot or passport size photo"
+                      accept=".jpg,.jpeg,.png"
+                      file={files.photo}
+                      onFileChange={(f) => setFile('photo', f)}
+                      onRemove={() => removeFile('photo')}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* --- Entrepreneurship / Self-employed Conditional Section --- */}
+              {isEntrepreneur && (
+                <div className="form-conditional">
+                  <h3 className="form-conditional__title">
+                    🚀 Entrepreneurship / Self-employed Details
+                  </h3>
+
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label className="form-label" htmlFor="companyName">
+                        Company Name <span className="form-label__required">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="companyName"
+                        name="companyName"
+                        className="form-input"
+                        placeholder="e.g., My Startup Pvt. Ltd. / Freelancer"
+                        value={formData.companyName}
+                        onChange={handleChange}
+                        required={isEntrepreneur}
+                      />
+                    </div>
+                    <FileUploadField
+                      id="photo"
+                      label="Professional Photo"
+                      required={true}
+                      hint="Upload a clear headshot or passport size photo"
+                      accept=".jpg,.jpeg,.png"
+                      file={files.photo}
+                      onFileChange={(f) => setFile('photo', f)}
+                      onRemove={() => removeFile('photo')}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* --- Preparing for Competitive Exams Section --- */}
+              {isPreparing && (
+                <div className="form-conditional">
+                  <h3 className="form-conditional__title">
+                    📝 Competitive Exam Preparation
+                  </h3>
+
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label className="form-label" htmlFor="examName">
+                        Exam Name <span className="form-label__required">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="examName"
+                        name="examName"
+                        className="form-input"
+                        placeholder="e.g., GATE, GRE, CAT, UPSC"
+                        value={formData.examName}
+                        onChange={handleChange}
+                        required={isPreparing}
+                      />
+                    </div>
+                    <FileUploadField
+                      id="photo"
+                      label="Professional Photo"
+                      required={true}
+                      hint="Upload a clear headshot or passport size photo"
+                      accept=".jpg,.jpeg,.png"
+                      file={files.photo}
+                      onFileChange={(f) => setFile('photo', f)}
+                      onRemove={() => removeFile('photo')}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* --- Seeking Opportunities Section --- */}
+              {isSearching && (
+                <div className="form-conditional">
+                  <h3 className="form-conditional__title">
+                    🔍 Seeking Opportunities
+                  </h3>
+
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="seekingExplanation">
+                      Additional Information
+                    </label>
+                    <textarea
+                      id="seekingExplanation"
+                      name="seekingExplanation"
+                      className="form-textarea"
+                      placeholder="Explain your position further (e.g., field of interest, types of roles you are seeking, preparation status)"
+                      value={formData.seekingExplanation}
+                      onChange={handleChange}
                     />
                   </div>
                 </div>

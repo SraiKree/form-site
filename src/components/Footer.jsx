@@ -11,7 +11,7 @@ function Footer() {
           Dundigal, Hyderabad, Telangana 500043
         </p>
         <p className="footer__legal">
-          This form is administered by the MLRIT Alumni &amp; Placement Cell.
+          This form is administered by the MLRIT Administration.
           All data collected is confidential and used solely for institutional records.
         </p>
       </div>

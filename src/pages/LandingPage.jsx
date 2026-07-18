@@ -17,7 +17,7 @@ function LandingPage({ onBegin }) {
           </h1>
 
           <p className="landing__description">
-            This form is intended for UG students who have graduated from MLR Institute of Technology and secured admission for higher studies during the academic year 2026–2027. Please provide accurate details of your admission and upload valid supporting documents. The information collected through this form will be used solely for institutional records, accreditation, and reporting purposes. Kindly ensure that all information provided is accurate and complete before submitting the form.
+            This form is intended for UG students who have graduated from MLR Institute of Technology for the academic year 2026. Please provide accurate details of your admission and upload valid supporting documents. The information collected through this form will be used solely for institutional records, accreditation, and reporting purposes. Kindly ensure that all information provided is accurate and complete before submitting the form.
           </p>
 
           <div className="landing__meta">
