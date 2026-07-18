@@ -455,7 +455,7 @@ function FormPage({ user, onBack }) {
                     </div>
                   </div>
 
-                  <div className="form-row" style={{ marginTop: 'var(--space-4)' }}>
+                  <div style={{ marginTop: 'var(--space-4)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
                     <FileUploadField
                       id="joiningLetter"
                       label="Joining / Offer Letter"
@@ -536,7 +536,7 @@ function FormPage({ user, onBack }) {
                     />
                   </div>
 
-                  <div className="form-row" style={{ marginTop: 'var(--space-4)' }}>
+                  <div style={{ marginTop: 'var(--space-4)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
                     <FileUploadField
                       id="admissionProof"
                       label="Proof of Admission"
@@ -568,8 +568,8 @@ function FormPage({ user, onBack }) {
                     🚀 Entrepreneurship / Self-employed Details
                   </h3>
 
-                  <div className="form-row">
-                    <div className="form-group">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+                    <div className="form-group" style={{ marginBottom: 0 }}>
                       <label className="form-label" htmlFor="companyName">
                         Company Name <span className="form-label__required">*</span>
                       </label>
@@ -605,8 +605,8 @@ function FormPage({ user, onBack }) {
                     📝 Competitive Exam Preparation
                   </h3>
 
-                  <div className="form-row">
-                    <div className="form-group">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+                    <div className="form-group" style={{ marginBottom: 0 }}>
                       <label className="form-label" htmlFor="examName">
                         Exam Name <span className="form-label__required">*</span>
                       </label>
